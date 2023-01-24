@@ -1,0 +1,13 @@
+C:\Users\5\source\repos\WordLibrary\LibTest\bin\Debug\LibTest.exe.config
+C:\Users\5\source\repos\WordLibrary\LibTest\bin\Debug\LibTest.exe
+C:\Users\5\source\repos\WordLibrary\LibTest\bin\Debug\LibTest.pdb
+C:\Users\5\source\repos\WordLibrary\LibTest\bin\Debug\WordLibrary.dll
+C:\Users\5\source\repos\WordLibrary\LibTest\bin\Debug\WordLibrary.pdb
+C:\Users\5\source\repos\WordLibrary\LibTest\obj\Debug\LibTest.csproj.AssemblyReference.cache
+C:\Users\5\source\repos\WordLibrary\LibTest\obj\Debug\LibTest.csproj.SuggestedBindingRedirects.cache
+C:\Users\5\source\repos\WordLibrary\LibTest\obj\Debug\LibTest.csproj.CoreCompileInputs.cache
+C:\Users\5\source\repos\WordLibrary\LibTest\obj\Debug\LibTest.csproj.CopyComplete
+C:\Users\5\source\repos\WordLibrary\LibTest\obj\Debug\LibTest.exe
+C:\Users\5\source\repos\WordLibrary\LibTest\obj\Debug\LibTest.pdb
+C:\Users\5\source\repos\WordLibrary\LibTest\bin\Debug\GroupDocs.Comparison.dll
+C:\Users\5\source\repos\WordLibrary\LibTest\bin\Debug\GroupDocs.Comparison.xml
