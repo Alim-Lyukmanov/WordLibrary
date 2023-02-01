@@ -5,12 +5,18 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Office.Interop.Word;
+using GroupDocs.Comparison;
+using System.ComponentModel;
+using System.IO;
+using System.Reflection;
+using System.Xml.Linq;
 
 public class WordTextPerformer
 {
+    private Missing missing = Missing.Value;
     private string wordPath;
     private Application app;
-    private Document doc;
+    private Microsoft.Office.Interop.Word.Document doc;
     private Microsoft.Office.Interop.Word.Range rng;
 
     public string WordPath { get { return wordPath; } set { wordPath = value; } }
@@ -24,9 +30,14 @@ public class WordTextPerformer
     private void InitApplication()
     {
         app = new Application();
-        doc = app.Documents.Open(this.wordPath);
+        InitDocument();
         app.Visible = false;
         rng = GetDocRange();
+    }
+
+    private void InitDocument()
+    {
+        doc = app.Documents.Open(this.wordPath);
     }
 
     private Microsoft.Office.Interop.Word.Range GetDocRange()
@@ -84,7 +95,7 @@ public class WordTextPerformer
 
     public void RemoveComments()
     {
-        doc.RemoveDocumentInformation(WdRemoveDocInfoType.wdRDIComments);
+        doc.DeleteAllComments();
     }
 
     public void RemoveHeaders()
@@ -191,6 +202,68 @@ public class WordTextPerformer
         wRange.Find.Forward = true;
         wRange.Find.Wrap = WdFindWrap.wdFindStop;
         wRange.Find.Execute(Replace: WdReplace.wdReplaceAll);
+    }
+
+    public void CompareDocuments(string targetDocumentPath, string resultDocumentPath)
+    {
+        Comparer cm;
+        CloseDoc();
+        cm = new Comparer(wordPath);
+        cm.Add(targetDocumentPath);
+        cm.Compare(resultDocumentPath);
+        var fName = cm.Source.Name;
+        InitDocument();
+    }
+
+    public void SplitDocByParagrapghs(string directoryToSave)
+    {
+        int pIndex = 1;
+        foreach (Paragraph p in doc.Paragraphs)
+        {
+            var doc2 = app.Documents.Add();
+            try
+            {
+
+                Range pRange = p.Range;
+                pRange.Copy();
+                doc2.Content.Paste();
+                //doc2.Content.PasteSpecial(DataType: WdPasteOptions.wdKeepSourceFormatting) ;
+                doc2.SaveAs2(Path.Combine(directoryToSave, "Paragraph_" + pIndex.ToString() + ".docx"));
+                pIndex++;
+            }
+            finally
+            {
+                doc2.Close();
+            }
+        }
+    }
+
+    public void MergeMultipleWordFiles(string resultFilePath, string mergableFilesDirectory)
+    {
+        Microsoft.Office.Interop.Word.Document resDoc;
+        if (File.Exists(resultFilePath))
+            File.Delete(resultFilePath);
+            resDoc = app.Documents.Add();
+        var filesToMerge = Directory.GetFiles(mergableFilesDirectory, "*.docx");
+        foreach (var f in filesToMerge)
+        {
+            if (Path.GetFileNameWithoutExtension(f).StartsWith("~"))
+                continue;
+            //var docToMerge = app.Documents.Open(f);
+            try
+            {
+                object what = WdGoToItem.wdGoToLine;
+                object which = WdGoToDirection.wdGoToLast;
+                Range endRange = resDoc.GoTo(ref what, ref which);
+                endRange.InsertFile(f);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        resDoc.SaveAs2(resultFilePath);
+        resDoc.Close();
     }
 }
 
